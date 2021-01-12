@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import jinja2
+#import jinja2
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,21 +54,27 @@ ROOT_URLCONF = 'meiduo_mall.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [os.path.join(BASE_DIR,'template')],
+        #'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
+
         'APP_DIRS': True,
         'OPTIONS': {
             #'environment':'jinja2.Environment',
-            'environment':'utils.jinja2_env.Environment',
+            #'environment':'utils.jinja2_env.Environment',
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
             ],
         },
+
     },
 ]
+
+
 
 WSGI_APPLICATION = 'meiduo_mall.wsgi.application'
 
@@ -84,7 +90,7 @@ DATABASES = {
         'USER':'root',
         'PASSWORD':'123456',
 
-        'NAME': 'meiduo_mall'
+        'NAME': 'meiduo_mall',
     }
 }
 
