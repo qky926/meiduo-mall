@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.http.response import HttpResponse
 import logging
 
@@ -30,7 +30,7 @@ def log(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #url(r'^log/$',log)
+    url(r'^',include('apps.users.urls',namespace = 'users')),
 ]
 
 
