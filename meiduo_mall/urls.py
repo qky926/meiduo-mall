@@ -30,7 +30,7 @@ def log(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^log/$',log)
+    #url(r'^log/$',log)
 ]
 
 
