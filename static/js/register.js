@@ -58,6 +58,7 @@ var vm = new Vue({
         },
         // 检查用户名
         check_username: function () {
+            //alert('离开光标');
             var re = /^[a-zA-Z0-9_-]{5,20}$/;
             if (re.test(this.username)) {
                 this.error_name = false;
@@ -87,6 +88,7 @@ var vm = new Vue({
         },
         // 检查手机号
         check_mobile: function () {
+
             var re = /^1[345789]\d{9}$/;
             if (re.test(this.mobile)) {
                 this.error_phone = false;
