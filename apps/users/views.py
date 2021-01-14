@@ -2,11 +2,12 @@ import re
 
 import view as view
 from django.http.response import HttpResponseBadRequest,HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
+from django.urls import reverse
 from django.views import View
-
+from apps.users.models import User
 
 
 
@@ -24,7 +25,7 @@ class Registered(View):
         #     4.手机号必须符合规则
         # 3.验证没问题数据入库
         # 4.返回数据
-        from apps.users.models import User
+
         data = request.POST
         username = data.get('username')
         password = data.get('password')
@@ -47,10 +48,10 @@ class Registered(View):
             return HttpResponseBadRequest('手机号不符合规则')
 
 
-        user = User.objects.create_user(username=username,password=password,password2=password2,mobile=mobile)
+        user = User.objects.create_user(username=username,password=password,mobile=mobile)
 
-        return HttpResponse('注册成功')
-
+        #return HttpResponse('注册成功')
+        return redirect(reverse('index:index'))
 
 
 
