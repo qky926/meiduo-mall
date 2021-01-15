@@ -1,16 +1,19 @@
+
 import re
 
 import view as view
-from django.http.response import HttpResponseBadRequest,HttpResponse
+from django.http.response import HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.urls import reverse
 from django.views import View
 from apps.users.models import User
+import logging
 
 
 
+logger = logging.getLogger('django')
 class Registered(View):
 
     def get(self,request):
@@ -48,11 +51,33 @@ class Registered(View):
             return HttpResponseBadRequest('手机号不符合规则')
 
 
-        user = User.objects.create_user(username=username,password=password,mobile=mobile)
+        try:
+            user = User.objects.create_user(username=username,password=password,mobile=mobile)
+        except Exception as e:
+            logger.error(e)
+
+        from django.contrib.auth import login
+
 
         #return HttpResponse('注册成功')
         return redirect(reverse('index:index'))
 
 
+# 如何判断用户名是否重复：
+# 1.前端获取到用户名信息发送到后端，后端接收数据
+# 2.后端接收到数据后查询数据库，是否有相同的数据，通过count数量为0则没有重复，为1则重复。
+# 3，请求方式：get 或post ,敏感数据一般用post,现在我们用get就可以。get还分两种，一：www.meidu_mall:8000/username/?username=qky
+# 二：www.meidu_mall:8000/username/qky/
+
+
+class usernameview(View):
+    def get(self,request,username):   #第二种get直接通过参数就可以得到数据，如果是第一种则要data = request.get(username)
+        try:
+            count = User.objects.filter(username=username).count()
+        except Exception as e:
+            logger.error(e)
+            return JsonResponse({'code':400,'errormsg':'数据库错误'})
+
+        return JsonResponse({'count':count})
 
 
