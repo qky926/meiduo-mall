@@ -32,7 +32,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^',include('apps.users.urls',namespace = 'users')),
     url(r'^',include('apps.index.urls',namespace='index')),
-
+    url(r'^',include('apps.verification.urls',namespace='verification')),
 ]
 
 
