@@ -69,11 +69,18 @@ class Smscodeview(View):#发送手机验证码
         if redis_code.decode() != imagecode:  #比对输入的验证码和redis的是否一致
             return JsonResponse({'code':'4002','codeerror':'ERROR'})
 
+        mark_mobile = redis_con.get('mark_%s'%mobile) #获取redis的标志
+        if mark_mobile:#如果标志为真则报错
+            return JsonResponse('发送过于频繁')
+
         from random import randint
         smscode = '%06d'%randint(0,999999)  #随机生成手机验证码
 
-        redis_con.setex(mobile,300,smscode)#把手机验证码保存到redis中
-        redis_con.delete(mobile)#删除redis里的mobile
+        pipe = redis_con.pipeline()#创建管道
+        pipe.setex(mobile,60,smscode)#把手机验证码保存到redis中
+        pipe.setex('mark_%s'%mobile,60,1) #设定标志
+        pipe.execute()#执行管道
+        #redis_con.delete(mobile)#删除redis里的mobile
 
         CCP().send_template_sms(mobile,[smscode,5],1)  #发送验证码
 
