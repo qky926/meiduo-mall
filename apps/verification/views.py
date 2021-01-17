@@ -60,7 +60,7 @@ class Smscodeview(View):#发送手机验证码
 
         redis_con = get_redis_connection('code')#连接redis
         redis_code = redis_con.get(uuid)    #从reids提取数据
-
+        redis_con.delete(uuid) #删除redis里的uuid
         # redis_code = str(redis_uuid,encoding='utf-8')  #python3后从redis得到的是二进制的，需要转化成str
 
         if redis_code is None:  #判断redis数据是否过期
@@ -73,6 +73,7 @@ class Smscodeview(View):#发送手机验证码
         smscode = '%06d'%randint(0,999999)  #随机生成手机验证码
 
         redis_con.setex(mobile,300,smscode)#把手机验证码保存到redis中
+        redis_con.delete(mobile)#删除redis里的mobile
 
         CCP().send_template_sms(mobile,[smscode,5],1)  #发送验证码
 
