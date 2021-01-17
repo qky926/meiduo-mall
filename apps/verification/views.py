@@ -82,6 +82,8 @@ class Smscodeview(View):#发送手机验证码
         pipe.execute()#执行管道
         #redis_con.delete(mobile)#删除redis里的mobile
 
-        CCP().send_template_sms(mobile,[smscode,5],1)  #发送验证码
+        # CCP().send_template_sms(mobile,[smscode,5],1)  #发送验证码
+        from celery_tasks.sms.tasks import send_sms_code
+        send_sms_code.delay(mobile,smscode)#调用delay发送到队列
 
         return JsonResponse({'code':'200','smserror':'ok'})
