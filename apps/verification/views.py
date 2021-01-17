@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http.response import HttpResponse, JsonResponse
 from django_redis import get_redis_connection
-
+from redis import StrictRedis
 
 from libs.captcha.captcha import captcha
 from libs.yuntongxun.sms import CCP
@@ -19,7 +19,7 @@ class Imageview(View):
         #2.连接reids
         redis_con = get_redis_connection('code')
         #3.把图片验证码保存到redis中 uuid:xxxx
-        redis_con.setex(uuid,1000,text)
+        redis_con.setex(uuid ,1000,text)
 
         return HttpResponse(image,content_type='image/jpeg')
 
@@ -55,17 +55,19 @@ class Smscodeview(View):#发送手机验证码
     def get(self,request,mobile):
         uuid = request.GET.get('uuid')  #接收前端uuid
         imagecode = request.GET.get('imagecode')#接收前端输入的图片验证码
-        # if not all(mobile,uuid,imagecode):#     2.2三个参数必须都有
-        #     return JsonResponse({'code':'0','smserror':'输入数据不全'})
+        if not all(mobile):#     2.2三个参数必须都有
+             return JsonResponse({'code':'0','smserror':'输入数据不全'})
 
         redis_con = get_redis_connection('code')#连接redis
         redis_code = redis_con.get(uuid)    #从reids提取数据
 
+        # redis_code = str(redis_uuid,encoding='utf-8')  #python3后从redis得到的是二进制的，需要转化成str
+
         if redis_code is None:  #判断redis数据是否过期
             return JsonResponse({'code':'4001','codeerror':'验证码过期'})
 
-        if redis_code != imagecode:  #比对输入的验证码和redis的是否一致
-            return JsonResponse({'code':'4002','codeerror':'输入验证码错误'})
+        if redis_code.decode() != imagecode:  #比对输入的验证码和redis的是否一致
+            return JsonResponse({'code':'4002','codeerror':'ERROR'})
 
         from random import randint
         smscode = '%06d'%randint(0,999999)  #随机生成手机验证码
