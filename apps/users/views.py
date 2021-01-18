@@ -81,3 +81,7 @@ class usernameview(View):
         return JsonResponse({'count':count})
 
 
+class Loginview(View):
+    def get(self,request):
+        #return HttpResponse('登录打通')
+        return render(request,'login.html')

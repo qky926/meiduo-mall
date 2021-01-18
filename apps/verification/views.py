@@ -11,7 +11,7 @@ from libs.captcha.captcha import captcha
 from libs.yuntongxun.sms import CCP
 
 
-class Imageview(View):
+class Imageview(View):#获取图片验证码
     def get(self,request,uuid):
 
         #1.生成图片验证码和获取图片验证码内容
@@ -71,7 +71,7 @@ class Smscodeview(View):#发送手机验证码
 
         mark_mobile = redis_con.get('mark_%s'%mobile) #获取redis的标志
         if mark_mobile:#如果标志为真则报错
-            return JsonResponse('发送过于频繁')
+            return JsonResponse('repeat sending',safe=False)#默认情况下，JsonResponse的第一个参数data应该是一个dict实例。要传递任何其他JSON可序列化的对象，必须将safe参数设置为False。
 
         from random import randint
         smscode = '%06d'%randint(0,999999)  #随机生成手机验证码
@@ -87,3 +87,5 @@ class Smscodeview(View):#发送手机验证码
         send_sms_code.delay(mobile,smscode)#调用delay发送到队列
 
         return JsonResponse({'code':'200','smserror':'ok'})
+
+
